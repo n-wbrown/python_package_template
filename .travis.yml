@@ -1,0 +1,48 @@
+language: python 
+python: 
+  - "3.6"
+
+env:
+  global:
+    - OFFICIAL_REPO="n-wbrown/python_package_template"
+    - ENV_NAME="python_package_template_env"
+    - secure: "haLhEWzmlsYROvRhjcdxNY7EZur5q0g+fKmh49bgL0y3Z6Xz8wQiMpfzxKtCnK5xBi8fTtqoB416w5d7O50Q3dzLmomslMBxT2xFZ8CVi9O5XzGFtWo8wCmy4xiOyn+hAMwpghSN/N0fu1baK3T3R81+XMUtOjmQtADX+aEpMbTxnMiPdsEF3eGwBu4jH3PQ0ii0kQ88iTb+aLH0CxzEw7E7SLnSGToxpAZGXAV0Fiq3QktlcFKMh5S4odQWrxej84W91fgRn8r0iHEsnJ9XwOs77ZP5ls/RpKltFGF4/8QAiPYxWWp7HTRNM2jS0bTUAoEmVcibqD+uc44ZItk7AgESY0CKFpgcGY8Mja9FZbxkBz5T6BCAYuhCkCeq46QhyWwAYGakdyIsyL/4xRL/w9Xrt9Ge0WrtG/5JZ2YNimXFDqh3DY2hxLqMkssKuN7fz8x30KneuReLWh8m6BI8KPOoZjkOtgmeZ+v+6gr2rg1N8jzhnXP0HHVgxTQ81KR/pEYG0Jje19SC43+ZadI7asg314X4jZWbtQSxDfwsUrQ5RzxNQ3vKZwZF1JmY1qodDaXE1Qjb0u92wAGAD3kNfTowadXHmPefu3D9bNMBFXLCYxM8LR8C72XLdfyHcUMwIRstLkpiu65uUalVlxlSA+Mp++np9Vdp5MGS0OknTgc="
+
+sudo: false
+
+git:
+  depth: 5
+
+install:
+  - sudo apt-get update
+  # Install, configure conda
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda config --set always_yes yes --set changeps1 no
+  # conda-build and anaconda-client may be optional, check this later
+  - conda install conda-build anaconda-client pip
+  - conda update -q conda
+  # Useful for debugging
+  - conda info -a
+  # Manage conda environment
+  - conda create -n $ENV_NAME pip
+  - source activate $ENV_NAME 
+  - pip install -r requirements.txt
+  - pip install coverage codecov
+
+script:
+  - coverage run run_tests.py
+  - coverage report -m 
+  - |
+    if [[ $TRAVIS_REPO_SLUG == $OFFICIAL_REPO ]]; then
+      set -e
+      pip install doctr
+      cd docs
+      make html
+      cd ../
+      doctr deploy . --built-docs docs/_build/html
+    fi
+
+after_success:
+  - codecov

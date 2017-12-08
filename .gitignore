@@ -1,0 +1,12 @@
+# Custom
+*.swp
+*.swo
+
+
+
+.DS_store
+*.pyc
+.vscode
+docs/_build/*
+.coverage
+.cache
