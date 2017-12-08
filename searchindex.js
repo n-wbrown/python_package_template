@@ -1,0 +1,1 @@
+Search.setIndex({docnames:["index"],envversion:53,filenames:["index.rst"],objects:{},objnames:{},objtypes:{},terms:{index:0,modul:0,page:0,search:0},titles:["Welcome to Python Package Template\u2019s documentation!"],titleterms:{document:0,indic:0,packag:0,python:0,tabl:0,templat:0,welcom:0}})
